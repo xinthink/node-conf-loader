@@ -1,0 +1,48 @@
+{
+  "name": "conf-loader",
+  "description": "Config file loader and watcher for Node.js",
+  "version": "0.0.1",
+  "homepage": "https://github.com/xinthink/node-conf-loader",
+  "author": {
+    "name": "xinthink",
+    "email": "yingxinwu.g@gmail.com",
+    "url": "xinthink.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/xinthink/node-conf-loader.git"
+  },
+  "bugs": {
+    "url": "https://github.com/xinthink/node-conf-loader/issues"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/xinthink/node-conf-loader/blob/master/LICENSE-MIT"
+    }
+  ],
+  "main": "out/lib/conf-loader",
+  "engines": {
+    "node": ">= 0.6.0"
+  },
+  "scripts": {
+    "test": "grunt"
+  },
+  "dependencies": {
+    "coffee-script": "~1.6.2"
+  },
+  "devDependencies": {
+    "grunt-contrib-jshint": "~0.1.1",
+    "grunt-contrib-watch": "~0.2.0",
+    "grunt-contrib-coffee": "~0.4.0",
+    "grunt-contrib-clean": "~0.4.0",
+    "grunt-contrib-copy": "~0.4.0",
+    "grunt-coffeelint": "~0.0.5",
+    "grunt-simple-mocha": "~0.4.0",
+    "grunt": "~0.4.1",
+    "chai": "~1.6.0",
+    "sinon": "~1.7.2",
+    "sinon-chai": "~2.4.0"
+  },
+  "keywords": ["conf", "config", "watch", "reload"]
+}
