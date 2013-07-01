@@ -16,28 +16,33 @@ events = require 'events'
 
 coffee = require 'coffee-script'
 
-fns = require './common'
-
 
 class CoffeeConfLoader extends events.EventEmitter
 
-  loadSync: (f) -> @evalConf fs.readFileSync f, 'utf-8'
+  loadSync: (f) ->
+    watchConfFile f, @_loadFile
+    @_evalConf fs.readFileSync f, 'utf-8'
 
 
   load: (f) ->
+    @_loadFile f
+    watchConfFile f, @, @_loadFile
+    this
+
+
+  _loadFile: (f) ->
     self = this
+
     fs.readFile f, 'utf-8', (err, data) ->
       return self.emit 'error', err if err
 
       try
-        self.emit 'updated', self.evalConf data
+        self.emit 'updated', self._evalConf data
       catch e
         self.emit 'error', e
 
-    this
 
-
-  evalConf: (content) ->
+  _evalConf: (content) ->
     content = """#{content}
     return conf
     """
@@ -53,6 +58,15 @@ class CoffeeConfLoader extends events.EventEmitter
     fn.module  = module
     fn.console = console
     fn()
+
+
+watchConfFile = (f, obj, cb) ->
+  fs.watch f, (event, filename) ->
+    switch event
+      when 'change'
+        cb.call obj, f
+      else
+        console.warn "unhandled confile file event: #{event}, #{f} -> #{filename}"
 
 
 module.exports = new CoffeeConfLoader

@@ -27,9 +27,12 @@ module.exports = (grunt)->
       test:
         src: ['src/test/**/*.coffee']
       options:
-        no_trailing_whitespace:
-          level: 'error'
         max_line_length:
+          value: 120
+          level: 'warn'
+        no_empty_param_list:
+          level: 'warn'
+        no_trailing_whitespace:
           level: 'warn'
     coffee:
       #compile:
