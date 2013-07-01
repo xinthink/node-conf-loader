@@ -20,7 +20,7 @@ coffee = require 'coffee-script'
 class CoffeeConfLoader extends events.EventEmitter
 
   loadSync: (f, locals={}) ->
-    watchConfFile f, @_loadFile, locals
+    watchConfFile f, @, @_loadFile, locals
     @_evalConf fs.readFileSync(f, 'utf-8'), locals
 
 

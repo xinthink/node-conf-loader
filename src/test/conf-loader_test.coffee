@@ -11,7 +11,7 @@ describe 'Coffee config loader', ->
     confs.removeAllListeners()
 
     tmp = path.join __dirname, 'conf/tmp'
-    # fs.unlinkSync tmp if fs.existsSync(tmp)
+    fs.unlinkSync tmp if fs.existsSync(tmp)
 
 
   it 'loads simple coffee config', ->
@@ -49,6 +49,39 @@ describe 'Coffee config loader', ->
     updated = 0
 
     confs.load(tmp, four: 4).on 'updated', (conf) ->
+      console.log 'updated:', updated, conf
+      conf.a.should.eq 1
+      conf.b.should.eq 2
+      switch updated
+        when 1
+          conf.c.should.eq 3
+        when 2
+          conf.d.should.eq 4
+          done()
+
+    update = (ln) ->
+      fs.appendFileSync tmp, ln
+      updated++
+
+    setTimeout update, 10, "\n  c: 3\n"
+    setTimeout update, 20, "\n  d: four\n"
+
+
+  it 'emit config file updated after a sync load', (done) ->
+    this.timeout 0
+    tmp = path.join __dirname, 'conf/tmp'
+    content = """
+    conf =
+      a: 1
+      b: 2
+    """
+    fs.writeFileSync tmp, content
+
+    updated = 0
+
+    conf = confs.loadSync(tmp, four: 4)
+
+    confs.on 'updated', (conf) ->
       console.log 'updated:', updated, conf
       conf.a.should.eq 1
       conf.b.should.eq 2
