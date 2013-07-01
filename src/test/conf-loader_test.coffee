@@ -48,7 +48,7 @@ describe 'Coffee config loader', ->
 
     updated = 0
 
-    confs.load(tmp).on 'updated', (conf) ->
+    confs.load(tmp, four: 4).on 'updated', (conf) ->
       console.log 'updated:', updated, conf
       conf.a.should.eq 1
       conf.b.should.eq 2
@@ -63,5 +63,5 @@ describe 'Coffee config loader', ->
       fs.appendFileSync tmp, ln
       updated++
 
-    setTimeout update, 50, "\n  c: 3\n"
-    setTimeout update, 100, "\n  d: 4\n"
+    setTimeout update, 10, "\n  c: 3\n"
+    setTimeout update, 20, "\n  d: four\n"

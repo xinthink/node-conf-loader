@@ -19,52 +19,54 @@ coffee = require 'coffee-script'
 
 class CoffeeConfLoader extends events.EventEmitter
 
-  loadSync: (f) ->
-    watchConfFile f, @_loadFile
-    @_evalConf fs.readFileSync f, 'utf-8'
+  loadSync: (f, locals={}) ->
+    watchConfFile f, @_loadFile, locals
+    @_evalConf fs.readFileSync(f, 'utf-8'), locals
 
 
-  load: (f) ->
-    @_loadFile f
-    watchConfFile f, @, @_loadFile
+  load: (f, locals={}) ->
+    @_loadFile f, locals
+    watchConfFile f, @, @_loadFile, locals
     this
 
 
-  _loadFile: (f) ->
+  _loadFile: (f, locals) ->
     self = this
 
     fs.readFile f, 'utf-8', (err, data) ->
       return self.emit 'error', err if err
 
       try
-        self.emit 'updated', self._evalConf data
+        self.emit 'updated', self._evalConf data, locals
       catch e
         self.emit 'error', e
 
 
-  _evalConf: (content) ->
+  _evalConf: (content, locals) ->
     content = """#{content}
     return conf
     """
 
-    code = """'use strict';
-    return #{coffee.compile content}
+    code = """with (locals) {
+      return #{coffee.compile content}
+    }
     """
 
-    fn = new Function code
-    fn.require = require
-    fn.global  = global
-    fn.process = process
-    fn.module  = module
-    fn.console = console
-    fn()
+    locals.require = require
+    locals.global  = global
+    locals.process = process
+    locals.module  = module
+    locals.console = console
+
+    fn = new Function 'locals', code
+    fn locals
 
 
-watchConfFile = (f, obj, cb) ->
+watchConfFile = (f, obj, cb, args...) ->
   fs.watch f, (event, filename) ->
     switch event
       when 'change'
-        cb.call obj, f
+        cb.apply obj, [f].concat args
       else
         console.warn "unhandled confile file event: #{event}, #{f} -> #{filename}"
 
