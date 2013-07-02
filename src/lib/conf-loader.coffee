@@ -20,11 +20,13 @@ coffee = require 'coffee-script'
 class CoffeeConfLoader extends events.EventEmitter
 
   loadSync: (f, locals={}) ->
+    addGlobals f, locals
     watchConfFile f, @, @_loadFile, locals
     @_evalConf fs.readFileSync(f, 'utf-8'), locals
 
 
   load: (f, locals={}) ->
+    addGlobals f, locals
     @_loadFile f, locals
     watchConfFile f, @, @_loadFile, locals
     this
@@ -37,7 +39,7 @@ class CoffeeConfLoader extends events.EventEmitter
       return self.emit 'error', err if err
 
       try
-        self.emit 'updated', self._evalConf data, locals
+        self.emit 'ready', self._evalConf data, locals
       catch e
         self.emit 'error', e
 
@@ -47,19 +49,23 @@ class CoffeeConfLoader extends events.EventEmitter
     return conf
     """
 
-    code = """with (locals) {
+    code = """var conf = {};
+    with (locals) {
       return #{coffee.compile content}
     }
     """
 
-    locals.require = require
-    locals.global  = global
-    locals.process = process
-    locals.module  = module
-    locals.console = console
-
     fn = new Function 'locals', code
     fn locals
+
+
+addGlobals = (f, locals) ->
+  locals.__dirname = path.dirname f
+  locals.require   = require
+  locals.global    = global
+  locals.process   = process
+  locals.module    = module
+  locals.console   = console
 
 
 watchConfFile = (f, obj, cb, args...) ->

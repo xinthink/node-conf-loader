@@ -22,7 +22,7 @@ describe 'Coffee config loader', ->
 
 
   it 'async load simple coffee config', (done) ->
-    confs.load(path.join __dirname, 'conf/simple.conf').on 'updated', (conf) ->
+    confs.load(path.join __dirname, 'conf/simple.conf').on 'ready', (conf) ->
       should.exist conf?.foo
       conf.foo.should.eq 'Foo'
       conf.bar.should.be.true
@@ -33,10 +33,10 @@ describe 'Coffee config loader', ->
 
   it 'async load invalid coffee config, error event emitted', (done) ->
     confs.load(path.join __dirname, 'conf/error.conf').on 'error', (err) -> done null
-    confs.on 'updated', -> done 'updated event is not expected to emit'
+    confs.on 'ready', -> done 'ready event is not expected to emit'
 
 
-  it 'emit updated event when config file updated', (done) ->
+  it 'emit ready event when config file updated', (done) ->
     this.timeout 0
     tmp = path.join __dirname, 'conf/tmp'
     content = """
@@ -48,7 +48,7 @@ describe 'Coffee config loader', ->
 
     updated = 0
 
-    confs.load(tmp, four: 4).on 'updated', (conf) ->
+    confs.load(tmp, four: 4).on 'ready', (conf) ->
       console.log 'updated:', updated, conf
       conf.a.should.eq 1
       conf.b.should.eq 2
@@ -67,7 +67,7 @@ describe 'Coffee config loader', ->
     setTimeout update, 20, "\n  d: four\n"
 
 
-  it 'emit config file updated after a sync load', (done) ->
+  it 'emit config file ready after a sync load', (done) ->
     this.timeout 0
     tmp = path.join __dirname, 'conf/tmp'
     content = """
@@ -81,7 +81,7 @@ describe 'Coffee config loader', ->
 
     conf = confs.loadSync(tmp, four: 4)
 
-    confs.on 'updated', (conf) ->
+    confs.on 'ready', (conf) ->
       console.log 'updated:', updated, conf
       conf.a.should.eq 1
       conf.b.should.eq 2
