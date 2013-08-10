@@ -90,6 +90,7 @@ describe 'Coffee config loader', ->
           conf.c.should.eq 3
         when 2
           conf.d.should.eq 4
+          confs.stopWatching()
           done()
 
     update = (ln) ->
