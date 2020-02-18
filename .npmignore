@@ -1,13 +1,31 @@
-/node_modules/
+# OSX
+#
+.DS_Store
 
-.travis*
-History.md
-grunt.coffee
-grunt.js
+# node.js
+#
+node_modules/
+*.log
 
+# WebStorm
+#
+.idea
+*.iml
+
+.*
+api-extractor.json
+ts*
+.vscode/
+
+lib/**/*.d.ts
+lib/**/*.ts.map
+lib/**/*.js.map
+!lib/index.d.ts
+
+__tests__/
 src/
-out/demo/
-out/test/
-out/vendor/
-
-/example/
+example/
+docs/
+dist/
+etc/
+temp/
